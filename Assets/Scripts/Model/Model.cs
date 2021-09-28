@@ -1,18 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
 
-public class Model : MonoBehaviour
+namespace MustlePassthrough
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+    public class Model : MonoBehaviour
     {
-        
+        public IntReactiveProperty TrainIndex = new IntReactiveProperty(0);
+        public FloatReactiveProperty TrainScore = new FloatReactiveProperty(0f);
+        public ReactiveCollection<float> TrainScores = new ReactiveCollection<float>();
+        public FloatReactiveProperty TotalScore = new FloatReactiveProperty(0f);
+        public string[] TrainName = {
+            "Squat",
+            "PushUp",
+            "Superman",
+            "Plank",
+            "Cycling",
+            "Crunch",
+            "NeatChest",
+            "SideVent",
+            "SidePlank"
+        };
     }
 }

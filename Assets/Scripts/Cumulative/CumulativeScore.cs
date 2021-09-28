@@ -4,8 +4,11 @@ using UnityEngine;
 
 namespace MustlePassthrough
 {
-    public class PresenterShow : MonoBehaviour
+    public class CumulativeScore : MonoBehaviour
     {
+        private float score = 0f;
+        public float Score { get; set; }
+
         // Start is called before the first frame update
         void Start( ) {
 

@@ -1,18 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UniRx;
+using UnityEngine;
 
 namespace MustlePassthrough
 {
-
     public class Model : MonoBehaviour
     {
-        public IntReactiveProperty TrainIndex = new IntReactiveProperty(0);
-        public FloatReactiveProperty TrainScore = new FloatReactiveProperty(0f);
-        public ReactiveCollection<float> TrainScores = new ReactiveCollection<float>();
-        public FloatReactiveProperty TotalScore = new FloatReactiveProperty(0f);
-        public string[] TrainName = {
+        public readonly IntReactiveProperty TrainIndex = new IntReactiveProperty(0);
+        public readonly FloatReactiveProperty TrainScore = new FloatReactiveProperty(0f);
+        public readonly ReactiveCollection<float> TrainScores = new ReactiveCollection<float>();
+        public readonly string[] TrainName = {
             "Squat",
             "PushUp",
             "Superman",

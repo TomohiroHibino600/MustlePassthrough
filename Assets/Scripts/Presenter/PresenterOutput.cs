@@ -23,13 +23,13 @@ namespace MustlePassthrough
 
             //TrainIndex‚Ì•Ï‰»‚ðView‚É”½‰f
             _model.TrainIndex
-                .Subscribe(x => IndexView(x))
-                .AddTo(this);
+                .TakeUntilDestroy(this)
+                .Subscribe(x => IndexView(x));
 
             //TrainScore‚Ì•Ï‰»‚ðView‚É”½‰f
             _model.TrainScore
-                .Subscribe(x => ScoreView(x))
-                .AddTo(this);
+                .TakeUntilDestroy(this)
+                .Subscribe(x => ScoreView(x));
 
             //‹ØƒgƒŒ‚ªI—¹‚µ‚½‚çŒ‹‰Ê‚ðView‚Å•\Ž¦
         }

@@ -10,7 +10,7 @@ namespace MustlePassthrough
         public readonly IntReactiveProperty TrainIndex = new IntReactiveProperty(0);
         public readonly FloatReactiveProperty TrainScore = new FloatReactiveProperty(0f);
         public readonly ReactiveCollection<float> TrainScores = new ReactiveCollection<float>();
-        public readonly string[] TrainName = {
+        public readonly string[] TrainNames = {
             "Squat",
             "PushUp",
             "Superman",

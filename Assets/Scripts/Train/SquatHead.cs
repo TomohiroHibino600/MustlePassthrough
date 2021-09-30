@@ -37,12 +37,12 @@ namespace MustlePassthrough
                 .TakeUntilDisable(this)
                 .Subscribe(_ => { _setTarget = true; } );
 
-            //ヘッドセットとHeadSphereが接したらTrainViewにスコアを入力
+            //ヘッドセットとHeadSphereが接したらTrainViewに筋トレ回数を入力
             this.OnTriggerEnterAsObservable()
                 .Where( _ => _setTarget )
                 .Where(collider => collider.gameObject == _mainCamera.gameObject)
                 .TakeUntilDisable( this )
-                .Subscribe( collider => AddScore(collider) );
+                .Subscribe( collider => AddTrainNum(collider) );
 
             //ヘッドセットがHeadSphereから離れたらHeadSphereの色を元に戻す
             this.OnTriggerExitAsObservable( )
@@ -68,11 +68,10 @@ namespace MustlePassthrough
             _lastCameraPos = _mainCamera.position;
         }
 
-        void AddScore(Collider collider)
+        void AddTrainNum(Collider collider)
         {
-            Debug.LogWarning("SquareHead");
-            //スコアを加算する
-            //タイムを記録する(若干ゆっくりの方がいいので、そこは考える)
+            //筋トレ回数を加算する
+            _trainView.AddTrainNumber(1);
 
             //HeadSphereのマテリアルを交換し、Exitでまた元に戻す
             _renderer.material = _materials[1];

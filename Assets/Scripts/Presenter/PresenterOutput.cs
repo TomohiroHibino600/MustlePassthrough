@@ -19,19 +19,23 @@ namespace MustlePassthrough
         // Start is called before the first frame update
         void Start( )
         {
-            //累計スコアをViewに反映
+            //これまでの累計スコアをViewに反映
 
             //TrainIndexの変化をViewに反映
             _model.TrainIndex
                 .TakeUntilDestroy(this)
                 .Subscribe(x => IndexView(x));
 
-            //TrainScoreの変化をViewに反映
-            _model.TrainScore
+            //筋トレ回数の変化をViewに反映
+            _model.TrainNumber
                 .TakeUntilDestroy(this)
-                .Subscribe(x => ScoreView(x));
+                .Subscribe(x => NumberView(x));
 
             //筋トレが終了したら結果をViewで表示
+            _model.TrainIndex
+                .Where(x => x == _model.TrainNames.Length)
+                .TakeUntilDestroy(this)
+                .Subscribe(_ => ResultView());
         }
 
         void IndexView(int index) {
@@ -40,9 +44,14 @@ namespace MustlePassthrough
             //筋トレの回数・秒数を計測する仕組みを更新
         }
 
-        void ScoreView(float score) {
+        void NumberView(int number) {
             //筋トレのスコアUIを更新
+            //※ただし、スコアUIは_model.GoalNumberの剰余で表示する
             //クラゲを生成
+        }
+
+        void ResultView( ) {
+
         }
     }
 }

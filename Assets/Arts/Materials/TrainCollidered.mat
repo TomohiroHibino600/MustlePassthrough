@@ -9,8 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: TrainCollidered
   m_Shader: {fileID: 4800000, guid: bdd6c8b9ff61aa54eaaf0f208c3a7f37, type: 3}
-  m_ShaderKeywords: _ALPHABLEND_ON
-  m_LightmapFlags: 4
+  m_ShaderKeywords: _ALPHABLEND_ON _EMISSION
+  m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 3000
@@ -75,6 +75,6 @@ Material:
     - _UVSec: 0
     - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 1, g: 0, b: 0, a: 0.11372549}
-    - _EmissionColor: {r: 0.076254874, g: 0.07784891, b: 0.11320752, a: 0.11372549}
+    - _Color: {r: 1, g: 0, b: 0, a: 0.58431375}
+    - _EmissionColor: {r: 1, g: 0, b: 0, a: 0.58431375}
   m_BuildTextureStacks: []

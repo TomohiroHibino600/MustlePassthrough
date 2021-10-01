@@ -13,6 +13,7 @@ namespace MustlePassthrough
     {
         [SerializeField] GameObject _numberUI = null;
         [SerializeField] TextMeshProUGUI _numberText = null;
+        [SerializeField] AudioSource _numberSE = null;
         [SerializeField] float _smallScaleParam = 0f;
         [SerializeField] float _scaleTime = 0f;
 
@@ -22,6 +23,9 @@ namespace MustlePassthrough
             _numberUI.transform
                 .DOScale(Vector3.one, _scaleTime)
                 .SetEase(Ease.OutElastic);
+
+            //‰ÁŽZŽž‚ÉSE‚ð–Â‚ç‚·
+            _numberSE.PlayOneShot(_numberSE.clip);
 
             _numberText.text = number.ToString();
         }

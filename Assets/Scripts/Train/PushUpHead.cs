@@ -7,35 +7,38 @@ using UnityEngine;
 namespace MustlePassthrough
 {
     /// <summary>
-    /// スクワットしている時の設定とスコアカウントを行う
+    /// 腕立て伏せしている時の設定とスコアカウントを行う
     /// </summary>
-    public class SquatHead : MonoBehaviour
+    public class PushUpHead : MonoBehaviour
     {
         [SerializeField] TrainView _trainView = null;
 
         [SerializeField] Transform _mainCamera = null;
         [SerializeField] Transform _leftFoot = null;
         [SerializeField] Transform _rightFoot = null;
+        [SerializeField] float _maxHeight = 1.4f;
 
         [SerializeField] MeshRenderer _renderer = null;
         [SerializeField] Material[] _materials = new Material[2];
 
-        private Vector3 _maxPoint = Vector3.zero;
+        private float _averageRot = 0f;
+        private float _nowHeight = 0f;
+        private float _lastHeight = 0f;
         private Vector3 _lastCameraPos = Vector3.zero;
         private bool _setTarget = false;
 
         void OnEnable( ) {
             //ヘッドセットを動かす目標地点にHeadSphereを近づける
-            this.UpdateAsObservable()
-                .Where(_ => !_setTarget)
-                .TakeUntilDisable(this)
-                .Subscribe(_ => MoveHeadSphere());
+            this.UpdateAsObservable( )
+                .Where( _ => !_setTarget )
+                .TakeUntilDisable( this )
+                .Subscribe( _ => MoveHeadSphere( ) );
 
-            //目標地点が決まったら、フラグを切り替える
-            this.OnTriggerExitAsObservable()
-                .Where(_ => !_setTarget)
-                .TakeUntilDisable(this)
-                .Subscribe(_ => { _setTarget = true; } );
+            //目標地点が決まったらフラグを切り替え、両手を置くべき部分を示す
+            this.OnTriggerExitAsObservable( )
+                .Where( _ => !_setTarget )
+                .TakeUntilDisable( this )
+                .Subscribe( _ => {_setTarget = true; } );
 
             //ヘッドセットとHeadSphereが接したらTrainViewに筋トレ回数を入力
             this.OnTriggerEnterAsObservable()
@@ -52,14 +55,20 @@ namespace MustlePassthrough
                 .Subscribe( collider => { _renderer.material = _materials[ 0 ]; } );
         }
 
-        void MoveHeadSphere()
-        {
-            //両足の中間を最低基準点として設定
-            _maxPoint = (_leftFoot.position + _rightFoot.position) / 2f;
+        void MoveHeadSphere( ) {
+            //頭と足につけたコントローラーを結んだ辺を斜辺とし、
+            //床を底辺として三角関数で腕立て伏せ中の頭の高さを求める
+            _averageRot = ( Mathf.Abs( _leftFoot.localEulerAngles.x ) + Mathf.Abs( _rightFoot.localEulerAngles.x ) ) / 2;
+            _nowHeight = Vector3.Distance( _mainCamera.position, _leftFoot.position ) * Mathf.Sin( _averageRot * Mathf.PI / 180f );
+            _lastHeight = Vector3.Distance( _lastCameraPos, _leftFoot.position ) * Mathf.Sin( _averageRot * Mathf.PI / 180f );
 
-            //カメラが最低基準点に近づくときのみ
-            if (Vector3.SqrMagnitude(_maxPoint - _lastCameraPos) > Vector3.SqrMagnitude( _maxPoint - _mainCamera.position ))
-            {
+            //頭と床が離れすぎているときは無視
+            if ( _nowHeight > _maxHeight ) {
+                return;
+            }
+
+            //頭が床に近づくときのみ
+            if ( _nowHeight < _lastHeight ) {
                 //HeadSphereをカメラのポジションに追随させる
                 transform.position = _mainCamera.position;
             }

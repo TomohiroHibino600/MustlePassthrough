@@ -5,35 +5,31 @@ using UnityEngine;
 
 namespace MustlePassthrough
 {
+    /// <summary>
+    /// Modelにデータを入力するPresenter
+    /// </summary>
     public class PresenterInput : MonoBehaviour
     {
-        [SerializeField] Model _model;
-        [SerializeField] CumulativeScore _cumulativeScore;
+        [SerializeField] Model _model = null;
 
-        [SerializeField] JellyfishView _jellyfish;
-        [SerializeField] GuidanceView _guidance;
-        [SerializeField] ScoreView _score;
-        [SerializeField] TrainView _train;
-        [SerializeField] ResultView _result;
+        [SerializeField] TrainView _trainView = null;
 
-        // Start is called before the first frame update
         void Start( ) {
             //筋トレ回数を加算
-            _train._trainSubject
+            _trainView.TrainSubject
                 .TakeUntilDestroy(this)
                 .Subscribe(x => CountTrainNumber(x));
 
-            //筋トレ10回目でTrainIndexを加算
+            //筋トレ回数がGoalNumberに達したら,TrainIndexを加算
             _model.TrainNumber
                 .Where(x => x != 0 & x % _model.GoalNumber == 0)
                 .Where( x => x <= _model.TrainNames.Length * _model.GoalNumber )
                 .TakeUntilDestroy(this)
                 .Subscribe(_ => { _model.TrainIndex.Value++; } );
-
-            //最終結果をCSVに書き込む
         }
 
         void CountTrainNumber(int x) {
+            //最後の筋トレを終えるまで、筋トレ回数をカウントする
             if ( _model.TrainNumber.Value < _model.TrainNames.Length * _model.GoalNumber ) {
                 _model.TrainNumber.Value += x;
             }

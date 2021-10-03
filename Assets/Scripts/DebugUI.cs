@@ -8,7 +8,7 @@ namespace MustlePassthrough {
     /// </summary>
     public class DebugUI : MonoBehaviour
     {
-        [SerializeField] TrainView _trainView;
+        [SerializeField] TrainView _trainView = null;
 
         private void Update( ) {
             if ( Input.GetKeyDown( KeyCode.U ) ) {

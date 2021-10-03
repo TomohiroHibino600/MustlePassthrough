@@ -7,24 +7,23 @@ using UnityEngine;
 namespace MustlePassthrough
 {
     /// <summary>
-    /// サイクリングの設定とスコアカウント
+    /// 
     /// </summary>
-    public class CyclingLeg : MonoBehaviour
+    public class SideVent : MonoBehaviour
     {
         [SerializeField] TrainView _trainView = null;
 
         [SerializeField] Transform _mainCamera = null;
         [SerializeField] Transform _leftFoot = null;
         [SerializeField] Transform _rightFoot = null;
-        [SerializeField] bool _isLeft = false;
 
         [SerializeField] MeshRenderer _renderer = null;
         [SerializeField] Material[ ] _materials = new Material[ 2 ];
 
-        private Vector3 _leftLegPos = Vector3.zero;
-        private Vector3 _lastLeftLegPos = Vector3.zero;
-        private Vector3 _rightLegPos = Vector3.zero;
-        private Vector3 _lastRightLegPos = Vector3.zero;
+        [SerializeField] GameObject _rightSphere;
+
+        private Vector3 _maxPoint = Vector3.zero;
+        private Vector3 _lastCameraPos = Vector3.zero;
         private bool _setTarget = false;
 
         void OnEnable( ) {
@@ -38,49 +37,41 @@ namespace MustlePassthrough
             this.OnTriggerExitAsObservable( )
                 .Where( _ => !_setTarget )
                 .TakeUntilDisable( this )
-                .Subscribe( _ => { _setTarget = true; } );
+                .Subscribe( _ => { 
+                    _setTarget = true;
+                    _rightSphere.transform.position = new Vector3(-transform.position.x, transform.position.y, -transform.position.z );
+                });
 
             //ヘッドセットとHeadSphereが接したらTrainViewに筋トレ回数を入力
             this.OnTriggerEnterAsObservable( )
                 .Where( _ => _setTarget )
-                .Where( collider => collider.gameObject.tag == "Leg" )
+                .Where( collider => collider.gameObject == _mainCamera.gameObject )
                 .TakeUntilDisable( this )
                 .Subscribe( collider => AddTrainNum( collider ) );
 
             //ヘッドセットがHeadSphereから離れたらHeadSphereの色を元に戻す
             this.OnTriggerExitAsObservable( )
                 .Where( _ => _setTarget )
-                .Where( collider => collider.gameObject.tag == "Leg" )
+                .Where( collider => collider.gameObject == _mainCamera.gameObject )
                 .TakeUntilDisable( this )
-                .Subscribe( collider => { _renderer.material = _materials[ 0 ]; } );
+                .Subscribe( collider => { 
+                    _renderer.material = _materials[ 0 ];
+                    _rightSphere.GetComponent<MeshRenderer>().material = _materials[ 0 ];
+                } );
         }
 
         void MoveSphere( ) {
-            if ( _isLeft ) {
-                //足の位置を取得
-                _leftLegPos = _leftFoot.position;
+            //両足の中間を最低基準点として設定
+            _maxPoint = ( _leftFoot.position + _rightFoot.position ) / 2f;
 
-                //足がカメラに近づくときのみ
-                if ( Vector3.SqrMagnitude( _leftLegPos - _mainCamera.position ) < Vector3.SqrMagnitude( _lastLeftLegPos - _mainCamera.position ) ) {
-                    //Sphereを足のポジションに追随させる
-                    transform.position = _leftLegPos;
-                }
-
-                //最新の足の位置を保持
-                _lastLeftLegPos = _leftFoot.position;
-            } else {
-                //足の位置を取得
-                _rightLegPos = _rightFoot.position;
-
-                //足がカメラに近づくときのみ
-                if ( Vector3.SqrMagnitude( _rightLegPos - _mainCamera.position ) < Vector3.SqrMagnitude( _lastRightLegPos - _mainCamera.position ) ) {
-                    //Sphereを足のポジションに追随させる
-                    transform.position = _rightLegPos;
-                }
-
-                //最新の足の位置を保持
-                _lastRightLegPos = _rightFoot.position;
+            //カメラが最低基準点に近づくときのみ
+            if ( Vector3.SqrMagnitude( _maxPoint - _lastCameraPos ) > Vector3.SqrMagnitude( _maxPoint - _mainCamera.position ) ) {
+                //HeadSphereをカメラのポジションに追随させる
+                transform.position = _mainCamera.position;
             }
+
+            //最新のカメラの位置を保持
+            _lastCameraPos = _mainCamera.position;
         }
 
         void AddTrainNum( Collider collider ) {
@@ -89,6 +80,7 @@ namespace MustlePassthrough
 
             //HeadSphereのマテリアルを交換し、Exitでまた元に戻す
             _renderer.material = _materials[ 1 ];
+            _rightSphere.GetComponent<MeshRenderer>( ).material = _materials[ 1 ];
         }
     }
 }

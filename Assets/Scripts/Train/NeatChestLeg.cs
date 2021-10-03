@@ -7,24 +7,21 @@ using UnityEngine;
 namespace MustlePassthrough
 {
     /// <summary>
-    /// サイクリングの設定とスコアカウント
+    /// ニートチェストレッグの設定とスコアカウント
     /// </summary>
-    public class CyclingLeg : MonoBehaviour
+    public class NeatChestLeg : MonoBehaviour
     {
         [SerializeField] TrainView _trainView = null;
 
         [SerializeField] Transform _mainCamera = null;
         [SerializeField] Transform _leftFoot = null;
         [SerializeField] Transform _rightFoot = null;
-        [SerializeField] bool _isLeft = false;
 
         [SerializeField] MeshRenderer _renderer = null;
         [SerializeField] Material[ ] _materials = new Material[ 2 ];
 
-        private Vector3 _leftLegPos = Vector3.zero;
-        private Vector3 _lastLeftLegPos = Vector3.zero;
-        private Vector3 _rightLegPos = Vector3.zero;
-        private Vector3 _lastRightLegPos = Vector3.zero;
+        private Vector3 _legPos = Vector3.zero;
+        private Vector3 _lastLegPos = Vector3.zero;
         private bool _setTarget = false;
 
         void OnEnable( ) {
@@ -56,31 +53,17 @@ namespace MustlePassthrough
         }
 
         void MoveSphere( ) {
-            if ( _isLeft ) {
-                //足の位置を取得
-                _leftLegPos = _leftFoot.position;
+            //足の位置を取得
+            _legPos = ( _leftFoot.position + _rightFoot.position ) / 2f;
 
-                //足がカメラに近づくときのみ
-                if ( Vector3.SqrMagnitude( _leftLegPos - _mainCamera.position ) < Vector3.SqrMagnitude( _lastLeftLegPos - _mainCamera.position ) ) {
-                    //Sphereを足のポジションに追随させる
-                    transform.position = _leftLegPos;
-                }
-
-                //最新の足の位置を保持
-                _lastLeftLegPos = _leftFoot.position;
-            } else {
-                //足の位置を取得
-                _rightLegPos = _rightFoot.position;
-
-                //足がカメラに近づくときのみ
-                if ( Vector3.SqrMagnitude( _rightLegPos - _mainCamera.position ) < Vector3.SqrMagnitude( _lastRightLegPos - _mainCamera.position ) ) {
-                    //Sphereを足のポジションに追随させる
-                    transform.position = _rightLegPos;
-                }
-
-                //最新の足の位置を保持
-                _lastRightLegPos = _rightFoot.position;
+            //足がカメラに近づくときのみ
+            if ( Vector3.SqrMagnitude( _legPos - _mainCamera.position ) < Vector3.SqrMagnitude( _lastLegPos - _mainCamera.position ) ) {
+                //Sphereを足のポジションに追随させる
+                transform.position = _legPos;
             }
+
+            //最新の足の位置を保持
+            _lastLegPos = ( _leftFoot.position + _rightFoot.position ) / 2f;
         }
 
         void AddTrainNum( Collider collider ) {

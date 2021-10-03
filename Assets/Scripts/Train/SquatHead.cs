@@ -29,7 +29,7 @@ namespace MustlePassthrough
             this.UpdateAsObservable()
                 .Where(_ => !_setTarget)
                 .TakeUntilDisable(this)
-                .Subscribe(_ => MoveHeadSphere());
+                .Subscribe(_ => MoveSphere());
 
             //目標地点が決まったら、フラグを切り替える
             this.OnTriggerExitAsObservable()
@@ -52,7 +52,7 @@ namespace MustlePassthrough
                 .Subscribe( collider => { _renderer.material = _materials[ 0 ]; } );
         }
 
-        void MoveHeadSphere()
+        void MoveSphere()
         {
             //両足の中間を最低基準点として設定
             _maxPoint = (_leftFoot.position + _rightFoot.position) / 2f;

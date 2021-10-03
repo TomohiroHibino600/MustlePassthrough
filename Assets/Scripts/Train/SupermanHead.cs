@@ -31,7 +31,7 @@ namespace MustlePassthrough
             this.UpdateAsObservable( )
                 .Where( _ => !_setTarget )
                 .TakeUntilDisable( this )
-                .Subscribe( _ => MoveHeadSphere( ) );
+                .Subscribe( _ => MoveSphere( ) );
 
             //目標地点が決まったらフラグを切り替え、両手を置くべき部分を示す
             this.OnTriggerExitAsObservable( )
@@ -54,7 +54,7 @@ namespace MustlePassthrough
                 .Subscribe( collider => { _renderer.material = _materials[ 0 ]; } );
         }
 
-        void MoveHeadSphere( ) {
+        void MoveSphere( ) {
             //基準点を決める
             _referencePoint = (_leftFoot.position + _rightFoot.position + _mainCamera.position) / 3f + Vector3.up * _referenceParam;
 

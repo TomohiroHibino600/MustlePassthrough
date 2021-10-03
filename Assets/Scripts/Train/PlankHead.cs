@@ -34,7 +34,7 @@ namespace MustlePassthrough
             this.UpdateAsObservable( )
                 .Where( _ => !_setTarget )
                 .TakeUntilDisable( this )
-                .Subscribe( _ => MoveHeadSphere( ) );
+                .Subscribe( _ => MoveSphere( ) );
 
             //目標地点が決まったらフラグを切り替え、両手を置くべき部分を示す
             this.OnTriggerExitAsObservable( )
@@ -57,7 +57,7 @@ namespace MustlePassthrough
                 .Subscribe( collider => { _renderer.material = _materials[ 0 ]; } );
         }
 
-        void MoveHeadSphere( ) {
+        void MoveSphere( ) {
             //目線と逆方向のベクトルと両足のコントローラーの上方向の向きの平均のベクトルの交点のy座標を求める
             _intersectionY = GetIntersectionY(_leftFoot, _rightFoot, _mainCamera);
 

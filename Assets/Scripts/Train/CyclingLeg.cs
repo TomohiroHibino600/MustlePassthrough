@@ -7,23 +7,21 @@ using UnityEngine;
 namespace MustlePassthrough
 {
     /// <summary>
-    /// 腕立て伏せしている時の設定とスコアカウントを行う
+    /// サイクリングの設定とスコアカウント
     /// </summary>
-    public class PushUpHead : MonoBehaviour
+    public class CyclingLeg : MonoBehaviour
     {
         [SerializeField] TrainView _trainView = null;
 
         [SerializeField] Transform _mainCamera = null;
         [SerializeField] Transform _leftFoot = null;
         [SerializeField] Transform _rightFoot = null;
-        [SerializeField] float _maxHeight = 1.4f;
+        [SerializeField] bool _isLeft = false;
 
         [SerializeField] MeshRenderer _renderer = null;
-        [SerializeField] Material[] _materials = new Material[2];
+        [SerializeField] Material[ ] _materials = new Material[ 2 ];
 
-        private float _averageRot = 0f;
-        private float _nowHeight = 0f;
-        private float _lastHeight = 0f;
+        private Vector3 _maxPoint = Vector3.zero;
         private Vector3 _lastCameraPos = Vector3.zero;
         private bool _setTarget = false;
 
@@ -34,18 +32,18 @@ namespace MustlePassthrough
                 .TakeUntilDisable( this )
                 .Subscribe( _ => MoveSphere( ) );
 
-            //目標地点が決まったらフラグを切り替える
+            //目標地点が決まったら、フラグを切り替える
             this.OnTriggerExitAsObservable( )
                 .Where( _ => !_setTarget )
                 .TakeUntilDisable( this )
-                .Subscribe( _ => {_setTarget = true; } );
+                .Subscribe( _ => { _setTarget = true; } );
 
             //ヘッドセットとHeadSphereが接したらTrainViewに筋トレ回数を入力
-            this.OnTriggerEnterAsObservable()
+            this.OnTriggerEnterAsObservable( )
                 .Where( _ => _setTarget )
-                .Where(collider => collider.gameObject == _mainCamera.gameObject)
+                .Where( collider => collider.gameObject == _mainCamera.gameObject )
                 .TakeUntilDisable( this )
-                .Subscribe( collider => AddTrainNum(collider) );
+                .Subscribe( collider => AddTrainNum( collider ) );
 
             //ヘッドセットがHeadSphereから離れたらHeadSphereの色を元に戻す
             this.OnTriggerExitAsObservable( )
@@ -56,34 +54,26 @@ namespace MustlePassthrough
         }
 
         void MoveSphere( ) {
-            //頭と足につけたコントローラーを結んだ辺を斜辺とし、
-            //床を底辺として三角関数で腕立て伏せ中の頭の高さを求める
-            _averageRot = ( Mathf.Abs( _leftFoot.localEulerAngles.x ) + Mathf.Abs( _rightFoot.localEulerAngles.x ) ) / 2;
-            _nowHeight = Vector3.Distance( _mainCamera.position, _leftFoot.position ) * Mathf.Sin( _averageRot * Mathf.PI / 180f );
-            _lastHeight = Vector3.Distance( _lastCameraPos, _leftFoot.position ) * Mathf.Sin( _averageRot * Mathf.PI / 180f );
-
-            //頭と床が離れすぎているときは無視
-            if ( _nowHeight > _maxHeight ) {
-                return;
-            }
-
-            //頭が床に近づくときのみ
-            if ( _nowHeight < _lastHeight ) {
-                //HeadSphereをカメラのポジションに追随させる
-                transform.position = _mainCamera.position;
+            //足がカメラに近づくときのみ
+            if ( Vector3.SqrMagnitude( _maxPoint - _mainCamera.position ) < Vector3.SqrMagnitude( _maxPoint - _lastCameraPos ) ) {
+                //Sphereを足のポジションに追随させる
+                if (_isLeft) {
+                    transform.position = _leftFoot.position;
+                } else {
+                    transform.position = _rightFoot.position;
+                }
             }
 
             //最新のカメラの位置を保持
             _lastCameraPos = _mainCamera.position;
         }
 
-        void AddTrainNum(Collider collider)
-        {
+        void AddTrainNum( Collider collider ) {
             //筋トレ回数を加算する
-            _trainView.AddTrainNumber(1);
+            _trainView.AddTrainNumber( 1 );
 
             //HeadSphereのマテリアルを交換し、Exitでまた元に戻す
-            _renderer.material = _materials[1];
+            _renderer.material = _materials[ 1 ];
         }
     }
 }

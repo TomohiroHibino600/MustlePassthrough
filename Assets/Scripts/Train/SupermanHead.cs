@@ -7,25 +7,24 @@ using UnityEngine;
 namespace MustlePassthrough
 {
     /// <summary>
-    /// 腕立て伏せしている時の設定とスコアカウントを行う
+    /// 背筋している時の設定とスコアカウント
     /// </summary>
-    public class PushUpHead : MonoBehaviour
+    public class SupermanHead : MonoBehaviour
     {
         [SerializeField] TrainView _trainView = null;
 
         [SerializeField] Transform _mainCamera = null;
         [SerializeField] Transform _leftFoot = null;
         [SerializeField] Transform _rightFoot = null;
-        [SerializeField] float _maxHeight = 1.4f;
+        [SerializeField] float _maxHeight = 0.8f;
+        [SerializeField] float _referenceParam = 1000f;
 
         [SerializeField] MeshRenderer _renderer = null;
         [SerializeField] Material[] _materials = new Material[2];
 
-        private float _averageRot = 0f;
-        private float _nowHeight = 0f;
-        private float _lastHeight = 0f;
-        private Vector3 _lastCameraPos = Vector3.zero;
         private bool _setTarget = false;
+        private Vector3 _referencePoint = Vector3.zero;
+        private Vector3 _lastCameraPos = Vector3.zero;
 
         void OnEnable( ) {
             //ヘッドセットを動かす目標地点にHeadSphereを近づける
@@ -34,7 +33,7 @@ namespace MustlePassthrough
                 .TakeUntilDisable( this )
                 .Subscribe( _ => MoveHeadSphere( ) );
 
-            //目標地点が決まったらフラグを切り替える
+            //目標地点が決まったらフラグを切り替え、両手を置くべき部分を示す
             this.OnTriggerExitAsObservable( )
                 .Where( _ => !_setTarget )
                 .TakeUntilDisable( this )
@@ -56,25 +55,22 @@ namespace MustlePassthrough
         }
 
         void MoveHeadSphere( ) {
-            //頭と足につけたコントローラーを結んだ辺を斜辺とし、
-            //床を底辺として三角関数で腕立て伏せ中の頭の高さを求める
-            _averageRot = ( Mathf.Abs( _leftFoot.localEulerAngles.x ) + Mathf.Abs( _rightFoot.localEulerAngles.x ) ) / 2;
-            _nowHeight = Vector3.Distance( _mainCamera.position, _leftFoot.position ) * Mathf.Sin( _averageRot * Mathf.PI / 180f );
-            _lastHeight = Vector3.Distance( _lastCameraPos, _leftFoot.position ) * Mathf.Sin( _averageRot * Mathf.PI / 180f );
+            //基準点を決める
+            _referencePoint = (_leftFoot.position + _rightFoot.position + _mainCamera.position) / 3f + Vector3.up * _referenceParam;
 
-            //頭と床が離れすぎているときは無視
-            if ( _nowHeight > _maxHeight ) {
+            //頭と足の高低差が大きすぎる場合は中止
+            if (_mainCamera.position.y - _leftFoot.position.y > _maxHeight) {
                 return;
             }
 
-            //頭が床に近づくときのみ
-            if ( _nowHeight < _lastHeight ) {
+            //カメラの位置が基準点に近くなるときのみ
+            if ( Vector3.Distance(_mainCamera.position, _referencePoint) < Vector3.Distance( _lastCameraPos, _referencePoint ) ) {
                 //HeadSphereをカメラのポジションに追随させる
                 transform.position = _mainCamera.position;
             }
 
             //最新のカメラの位置を保持
-            _lastCameraPos = _mainCamera.position;
+            _lastCameraPos = _mainCamera.transform.position;
         }
 
         void AddTrainNum(Collider collider)

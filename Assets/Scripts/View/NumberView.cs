@@ -36,13 +36,13 @@ namespace MustlePassthrough
 
             //ƒJƒƒ‰‚ª‘OŒX‚µ‚Ä‚¢‚È‚¢ê‡‚Í³–Ê‚ÉUI‚ð’u‚­
             this.UpdateAsObservable( )
-                .Where( _ => _mainCamera.localEulerAngles.x <= _posChangeRot & !_putFront )
+                .Where( _ => _mainCamera.eulerAngles.x <= _posChangeRot & !_putFront )
                 .TakeUntilDestroy( this )
                 .Subscribe( _ => PutFront( ) );
 
             //ƒJƒƒ‰‚ªŒX‚¢‚½‚ç°‚Ì‰º‚ÉUI‚ðˆÚ“®‚³‚¹‚é
             this.UpdateAsObservable( )
-                .Where(_ => _mainCamera.localEulerAngles.x > _posChangeRot & !_putUnder)
+                .Where(_ => _mainCamera.eulerAngles.x > _posChangeRot & !_putUnder)
                 .TakeUntilDestroy( this )
                 .Subscribe(_ => PutUnder());
         }

@@ -61,9 +61,9 @@ namespace MustlePassthrough
                 _leftLegPos = _leftFoot.position;
 
                 //足がカメラに近づくときのみ
-                if ( Vector3.SqrMagnitude( _leftLegPos - _mainCamera.position ) < Vector3.SqrMagnitude( _lastLeftLegPos - _mainCamera.position ) ) {
+                if ( _leftLegPos.y - _mainCamera.position.y < _lastLeftLegPos.y - _mainCamera.position.y ) {
                     //Sphereを足のポジションに追随させる
-                    transform.position = _leftLegPos;
+                    transform.position = _leftFoot.position;
                 }
 
                 //最新の足の位置を保持
@@ -73,9 +73,9 @@ namespace MustlePassthrough
                 _rightLegPos = _rightFoot.position;
 
                 //足がカメラに近づくときのみ
-                if ( Vector3.SqrMagnitude( _rightLegPos - _mainCamera.position ) < Vector3.SqrMagnitude( _lastRightLegPos - _mainCamera.position ) ) {
+                if ( _rightLegPos.y - _mainCamera.position.y < _lastRightLegPos.y - _mainCamera.position.y ) {
                     //Sphereを足のポジションに追随させる
-                    transform.position = _rightLegPos;
+                    transform.position = _rightFoot.position;
                 }
 
                 //最新の足の位置を保持

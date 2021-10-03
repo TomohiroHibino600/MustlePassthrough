@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
+using DG.Tweening;
 
 namespace MustlePassthrough
 {
@@ -44,9 +45,9 @@ namespace MustlePassthrough
             _numberView.ShowNumber(number % _model.GoalNumber);
 
             //ƒNƒ‰ƒQ‚ğ¶¬B‘½‚­‚È‚è‚·‚¬‚È‚¢‚æ‚¤‚Éí–Ú”‚É‚æ‚Á‚Ä’²®B
-            if (number % (int)(_model.TrainNames.Length / 2) == 1) {
+            //if (number % (int)(_model.TrainNames.Length / 2) == 1) {
                 _jellyfishView.SpawnJellyfish();
-            }
+            //}
         }
 
         void IndexView(int index) {

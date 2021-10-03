@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using System;
-using DG.Tweening;
 
 namespace MustlePassthrough
 {
@@ -13,7 +12,6 @@ namespace MustlePassthrough
     public class TrainView : MonoBehaviour
     {
         [SerializeField] GameObject[] _trainUI = null;
-        [SerializeField] float _waitTime = 3f;
 
         private Subject<int> _trainSubject = new Subject<int>( );
         public IObservable<int> TrainSubject => _trainSubject.TakeUntilDestroy(this);
@@ -28,9 +26,7 @@ namespace MustlePassthrough
 
         public void ShowTrainUI(int trainIndex) {
             DisactiveAllTrainUI();
-            DOVirtual.DelayedCall(_waitTime, () => {
-                _trainUI[ trainIndex ].SetActive( true );
-            });
+            _trainUI[ trainIndex ].SetActive( true );
         }
 
         public void DisactiveAllTrainUI( ) {

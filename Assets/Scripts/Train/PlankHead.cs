@@ -30,6 +30,10 @@ namespace MustlePassthrough
         private float _lastIntersectionY = 0f;
 
         void OnEnable( ) {
+            if ( _trainView == null ) {
+                _trainView = GameObject.FindGameObjectWithTag( "TrainView" ).GetComponent<TrainView>( );
+            }
+
             //Sphereを動かし、目標地点を決め、その目標地点にSphereを固定
             this.UpdateAsObservable( )
                 .Where( _ => !_setTarget )

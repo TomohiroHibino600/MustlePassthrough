@@ -17,8 +17,18 @@ namespace MustlePassthrough
         public IObservable<int> TrainSubject => _trainSubject.TakeUntilDestroy(this);
 
         void Start( ) {
-            DisactiveAllTrainUI();
-            _trainUI[0].SetActive(true);
+            if ( _trainUI.Length > 0 ) {
+                DisactiveAllTrainUI( );
+                _trainUI[ 0 ].SetActive( true );
+            }
+        }
+
+        void Update( ) {
+            if ( _trainUI.Length <= 0 ) {
+                _trainUI = GameObject.FindGameObjectsWithTag( "TrainUI" );
+                DisactiveAllTrainUI( );
+                _trainUI[ 0 ].SetActive( true );
+            }
         }
 
         public void AddTrainNumber(int value) {

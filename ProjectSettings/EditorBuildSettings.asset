@@ -6,8 +6,14 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MustlePassthrough.unity
+    path: Assets/Scenes/Lobby/Lobby.unity
+    guid: bacf58983e294e444af7093ba2620340
+  - enabled: 1
+    path: Assets/Scenes/SinglePlay/MustlePassthrough.unity
     guid: 1e3ed8393351dbb46868ef13f53dda19
+  - enabled: 1
+    path: Assets/Scenes/MultiPlay/MultiMustlePassthrough.unity
+    guid: 84d6f69d151f9634c80d39a3ffa87a08
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 5428f2033035d72468d2894b5dd715bb, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 078fe2178b8383f499e567ccd6bd2728, type: 2}

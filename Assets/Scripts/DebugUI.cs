@@ -10,6 +10,12 @@ namespace MustlePassthrough {
     {
         [SerializeField] TrainView _trainView = null;
 
+        void Start( ) {
+            if (_trainView == null) {
+                _trainView = GameObject.FindGameObjectWithTag("TrainView").GetComponent<TrainView>();
+            }
+        }
+
         private void Update( ) {
             if ( Input.GetKeyDown( KeyCode.U ) ) {
                 _trainView.AddTrainNumber( 1 );

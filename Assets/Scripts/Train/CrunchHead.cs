@@ -25,6 +25,10 @@ namespace MustlePassthrough
         private bool _setTarget = false;
 
         void OnEnable( ) {
+            if (_trainView == null) {
+                _trainView = GameObject.FindGameObjectWithTag("TrainView").GetComponent<TrainView>();
+            }
+
             //ヘッドセットを動かす目標地点にHeadSphereを近づける
             this.UpdateAsObservable( )
                 .Where( _ => !_setTarget )

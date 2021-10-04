@@ -34,9 +34,9 @@ namespace MustlePassthrough
             _numberView.ShowNumber(number % _model.GoalNumber);
 
             //ƒNƒ‰ƒQ‚ğ¶¬B‘½‚­‚È‚è‚·‚¬‚È‚¢‚æ‚¤‚Éí–Ú”‚É‚æ‚Á‚Ä’²®B
-            //if (number % (int)(_model.TrainNames.Length / 2) == 1) {
+            if (number % (int)(_model.TrainNames.Length / 2) == 1) {
                 _jellyfishView.SpawnJellyfish();
-            //}
+            }
         }
 
         public void IndexView(int index, GuidanceView _guidanceView, TrainView _trainView, IModel _model) {

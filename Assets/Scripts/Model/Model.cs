@@ -10,19 +10,22 @@ namespace MustlePassthrough
     /// PresenterInputがモデルへのデータ入力、
     /// PresenterOutputがモデルからGameObjectへのデータの出力を行っている
     /// </summary>
-    public class Model : MonoBehaviour
+    public class Model : IModel
     {
         //全筋トレの順番を管理するindex
-        public readonly IntReactiveProperty TrainIndex = new IntReactiveProperty(0);
-        
+        private IntReactiveProperty _trainIndex = new IntReactiveProperty(0);
+        public IReactiveProperty<int> TrainIndex { get => _trainIndex; }
+
         //筋トレ総回数
-        public readonly IntReactiveProperty TrainNumber = new IntReactiveProperty(0);
+        private IntReactiveProperty _trainNumber = new IntReactiveProperty(0);
+        public IReactiveProperty<int> TrainNumber { get => _trainNumber; }
         
         //各筋トレの目標数
-        public readonly int GoalNumber = 10;
+        private int _goalNumber = 10;
+        public int GoalNumber { get => _goalNumber; }
         
         //筋トレの全種目名
-        public readonly string[] TrainNames = {
+        private string[] _trainNames = {
             "Squat",
             "PushUp",
             "Superman",
@@ -33,5 +36,14 @@ namespace MustlePassthrough
             "SideVent",
             "SidePlank"
         };
+        public string[] TrainNames { get => _trainNames; }
+    }
+
+    public interface IModel
+    {
+        IReactiveProperty<int> TrainIndex { get; }
+        IReactiveProperty<int> TrainNumber { get; }
+        int GoalNumber { get; }
+        string[] TrainNames { get; }
     }
 }

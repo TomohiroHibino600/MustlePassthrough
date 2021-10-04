@@ -16,8 +16,9 @@ namespace MustlePassthrough
         private Subject<int> _trainSubject = new Subject<int>( );
         public IObservable<int> TrainSubject => _trainSubject.TakeUntilDestroy(this);
 
-        void Awake( ) {
+        void Start( ) {
             DisactiveAllTrainUI();
+            _trainUI[0].SetActive(true);
         }
 
         public void AddTrainNumber(int value) {

@@ -2,45 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
-using DG.Tweening;
+using Zenject;
 
 namespace MustlePassthrough
 {
     /// <summary>
     /// モデルのデータをViewに反映するPresenter
     /// </summary>
-    public class PresenterOutput : MonoBehaviour
+    public class PresenterOutput : IPresenterOutput
     {
-        [SerializeField] Model _model = null;
-
-        [SerializeField] JellyfishView _jellyfishView = null;
-        [SerializeField] GuidanceView _guidanceView = null;
-        [SerializeField] NumberView _numberView = null;
-        [SerializeField] TrainView _trainView = null;
-        [SerializeField] ResultView _resultView = null;
-
-        // Start is called before the first frame update
-        void Start( )
+        [Inject]
+        PresenterOutput(IModel _model, JellyfishView _jellyfishView, GuidanceView _guidanceView, NumberView _numberView, TrainView _trainView, ResultView _resultView)
         {
             //筋トレ回数の変化をViewに反映
             _model.TrainNumber
-                .TakeUntilDestroy( this )
-                .Subscribe( x => NumberView( x ) );
+                .Subscribe( x => NumberView( x, _numberView, _jellyfishView, _model ) );
 
             //TrainIndexの変化をViewに反映
             _model.TrainIndex
                 .Where( x => x < _model.TrainNames.Length )
-                .TakeUntilDestroy(this)
-                .Subscribe(x => IndexView(x));
+                .Subscribe(x => IndexView(x, _guidanceView, _trainView, _model));
 
             //筋トレが終了したら結果をViewで表示
             _model.TrainIndex
                 .Where(x => x == _model.TrainNames.Length)
-                .TakeUntilDestroy(this)
-                .Subscribe(_ => ResultView());
+                .Subscribe(_ => ResultView( _guidanceView, _trainView, _numberView, _resultView));
         }
 
-        void NumberView( int number ) {
+        public void NumberView( int number, NumberView _numberView, JellyfishView _jellyfishView, IModel _model) {
             //筋トレを行った回数を示す
             _numberView.ShowNumber(number % _model.GoalNumber);
 
@@ -50,7 +39,7 @@ namespace MustlePassthrough
             //}
         }
 
-        void IndexView(int index) {
+        public void IndexView(int index, GuidanceView _guidanceView, TrainView _trainView, IModel _model) {
             //筋トレの種目名を表示
             _guidanceView.ShowTrainName(_model.TrainNames[index]);
 
@@ -58,7 +47,7 @@ namespace MustlePassthrough
             _trainView.ShowTrainUI(index);
         }
 
-        void ResultView( ) {
+        public void ResultView(GuidanceView _guidanceView, TrainView _trainView, NumberView _numberView, ResultView _resultView) {
             //筋トレの種目名と数えるためのGameObject, 筋トレ回数を非表示
             _guidanceView.DisactiveTrainName();
             _trainView.DisactiveAllTrainUI();
@@ -67,5 +56,12 @@ namespace MustlePassthrough
             //筋トレの結果を表示
             _resultView.ShowResultUI();
         }
+    }
+
+    public interface IPresenterOutput
+    {
+        void NumberView( int number, NumberView _numberView, JellyfishView _jellyfishView, IModel _model );
+        void IndexView( int index, GuidanceView _guidanceView, TrainView _trainView, IModel _model );
+        void ResultView( GuidanceView _guidanceView, TrainView _trainView, NumberView _numberView, ResultView _resultView );
     }
 }

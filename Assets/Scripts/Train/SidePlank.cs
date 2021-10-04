@@ -27,26 +27,26 @@ namespace MustlePassthrough
         private float _lastIntersectionY = 0f;
 
         void OnEnable( ) {
-            //ヘッドセットを動かす目標地点にHeadSphereを近づける
+            //Sphereを動かし、目標地点を決め、その目標地点にSphereを固定
             this.UpdateAsObservable( )
                 .Where( _ => !_setTarget )
                 .TakeUntilDisable( this )
                 .Subscribe( _ => MoveSphere( ) );
 
-            //目標地点が決まったらフラグを切り替え、両手を置くべき部分を示す
+            //目標地点が決まったらフラグを切り替える
             this.OnTriggerExitAsObservable( )
                 .Where( _ => !_setTarget )
                 .TakeUntilDisable( this )
                 .Subscribe( _ => { _setTarget = true; } );
 
-            //ヘッドセットとHeadSphereが接したらTrainViewに筋トレ回数を入力
+            //部位と固定した球が接したらTrainViewに筋トレ回数を入力
             this.OnTriggerEnterAsObservable( )
                 .Where( _ => _setTarget )
                 .Where( collider => collider.gameObject == _mainCamera.gameObject )
                 .TakeUntilDisable( this )
                 .Subscribe( collider => AddTrainNum( collider ) );
 
-            //ヘッドセットがHeadSphereから離れたらHeadSphereの色を元に戻す
+            //部位が固定した球から離れたら球の色を元に戻す
             this.OnTriggerExitAsObservable( )
                 .Where( _ => _setTarget )
                 .Where( collider => collider.gameObject == _mainCamera.gameObject )
@@ -55,7 +55,7 @@ namespace MustlePassthrough
         }
 
         void MoveSphere( ) {
-            //目線と逆方向のベクトルと両足のコントローラーの上方向の向きの平均のベクトルの交点のy座標を求める
+            //目線に対して下方向のベクトルと両足のコントローラーの上方向の向きの平均のベクトルの交点のy座標を求める
             _intersectionY = GetIntersectionY( _leftFoot, _rightFoot, _mainCamera );
 
             //交点のy座標が高くなるときのみ
@@ -64,7 +64,7 @@ namespace MustlePassthrough
                 transform.position = _mainCamera.position;
             }
 
-            //最新のカメラの位置を保持
+            //最新の交点の位置を保持
             _lastIntersectionY = GetIntersectionY( _leftFoot, _rightFoot, _mainCamera ); ;
         }
 
@@ -72,12 +72,12 @@ namespace MustlePassthrough
             //筋トレ回数を加算する
             _trainView.AddTrainNumber( 1 );
 
-            //HeadSphereのマテリアルを交換し、Exitでまた元に戻す
+            //Sphereのマテリアルを交換し、TriggerExitでまた元に戻す
             _renderer.material = _materials[ 1 ];
         }
 
         /// <summary>
-        /// 目線と逆方向のベクトルと両足のコントローラーの上方向の向きの平均のベクトルの交点のy座標を求める
+        /// 目線に対して下方向のベクトルと両足のコントローラーの上方向の向きの平均のベクトルの交点のy座標を求める
         /// </summary>
         /// <param name="leftFoot"></param>
         /// <param name="rightFoot"></param>

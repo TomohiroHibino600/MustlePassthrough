@@ -27,13 +27,14 @@ namespace MustlePassthrough
         private bool _setTarget = false;
 
         void OnEnable( ) {
-            //ヘッドセットを動かす目標地点にHeadSphereを近づける
+            //Sphereを動かし、目標地点を決め、その目標地点にSphereを固定
             this.UpdateAsObservable( )
                 .Where( _ => !_setTarget )
                 .TakeUntilDisable( this )
                 .Subscribe( _ => MoveSphere( ) );
 
             //目標地点が決まったら、フラグを切り替える
+            //また、右に目標地点となる球を追加する
             this.OnTriggerExitAsObservable( )
                 .Where( _ => !_setTarget )
                 .TakeUntilDisable( this )
@@ -42,14 +43,14 @@ namespace MustlePassthrough
                     _rightSphere.transform.position = new Vector3(-transform.position.x, transform.position.y, -transform.position.z );
                 });
 
-            //ヘッドセットとHeadSphereが接したらTrainViewに筋トレ回数を入力
+            //部位と固定した球が接したらTrainViewに筋トレ回数を入力
             this.OnTriggerEnterAsObservable( )
                 .Where( _ => _setTarget )
                 .Where( collider => collider.gameObject == _mainCamera.gameObject )
                 .TakeUntilDisable( this )
                 .Subscribe( collider => AddTrainNum( collider ) );
 
-            //ヘッドセットがHeadSphereから離れたらHeadSphereの色を元に戻す
+            //部位が固定した球から離れたら左右の球の色を元に戻す
             this.OnTriggerExitAsObservable( )
                 .Where( _ => _setTarget )
                 .Where( collider => collider.gameObject == _mainCamera.gameObject )
@@ -78,7 +79,7 @@ namespace MustlePassthrough
             //筋トレ回数を加算する
             _trainView.AddTrainNumber( 1 );
 
-            //HeadSphereのマテリアルを交換し、Exitでまた元に戻す
+            //左右のSphereのマテリアルを交換し、TriggerExitでまた元に戻す
             _renderer.material = _materials[ 1 ];
             _rightSphere.GetComponent<MeshRenderer>( ).material = _materials[ 1 ];
         }

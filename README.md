@@ -25,7 +25,7 @@ https://user-images.githubusercontent.com/62923803/135836727-ab7a44e6-3ed3-422d-
 # Note
 MVRPパターンとはUniRxを用いたMVPパターンのことです。
 下記のようにModel, Presenter, Viewを作成しました。
-その際、Zenject(extenject)を用いて依存性を管理し、ModelとPresenterはMonobehaviourの継承をなくしました。
+その際、Zenject(extenject)を用いて依存性を管理し、ModelとPresenterはMonoBehaviourの継承をなくしました。
 - [Model](https://github.com/TomohiroHibino600/MustlePassthrough/blob/main/Assets/Scripts/Model/Model.cs)
 - [Presenter(Modelへの入力)](https://github.com/TomohiroHibino600/MustlePassthrough/blob/main/Assets/Scripts/Presenter/PresenterInput.cs)
 - [Presenter(ModelからViewへの出力)](https://github.com/TomohiroHibino600/MustlePassthrough/blob/main/Assets/Scripts/Presenter/PresenterOutput.cs)

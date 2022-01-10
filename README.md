@@ -35,7 +35,7 @@ MVRPパターンとはUniRxを用いたMVPパターンのことです。
  
 # Author
 * 作成者 Tomohiro Hibino
-* twitter https://twitter.com/33bWy
+* twitter https://twitter.com/vino_xr
  
 # License
 "MustlePassthrough" is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
